@@ -68,13 +68,17 @@ public class RollSheet {
         absentees = new ArrayList<>();
     }
 
-    public List<Person> getAttendees() {
+    public ArrayList<Person> getAttendees() {
         return attendees;
     }
 
-    public List<Person> getAbsentees() {
+    public ArrayList<Person> getAbsentees() {
         return absentees;
     }
+
+    public void setAttendees(ArrayList<Person> list) { this.attendees = list; }
+
+    public void setAbsentees(ArrayList<Person> list) { this.absentees = list; }
 
     public void setFileName(String fileName) { this.fileName = fileName; }
 

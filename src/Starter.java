@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -23,7 +24,7 @@ public class Starter {
         System.out.println("Welcome to the Roll Sheet");
         try {
             sheet = new RollSheet(filename);
-            if(confirmYes("There is a Roll Sheet already created for today, would you like to load it?"))
+            if(confirmYes("There is a Roll Sheet already created for today, would you like to load it? "))
                 manageSheet(sheet, false);
             mainMenu();
         } catch(FileNotFoundException f) {
@@ -38,7 +39,7 @@ public class Starter {
             System.out.println("LOAD a sheet");
             System.out.println("START a new sheet");
             System.out.println("QUIT");
-            input = scanner.next().toUpperCase();
+            input = scanner.nextLine().toUpperCase();
             switch (input) {
                 case ("LOAD") -> loadSheet();
                 case ("START") -> startSheet();
@@ -50,7 +51,7 @@ public class Starter {
         System.out.println();
         System.out.println("-----------Load Sheet-----------");
         System.out.println("Please enter a filename (CANCEL to exit).");
-        input = scanner.next();
+        input = scanner.nextLine();
         try {
             if(!input.equalsIgnoreCase("CANCEL"))
                 manageSheet(new RollSheet(input), false);
@@ -64,7 +65,7 @@ public class Starter {
         System.out.println();
         System.out.println("-----------New Sheet------------");
         System.out.println("Please enter a filename.");
-        input = scanner.next();
+        input = scanner.nextLine();
         sheet.setFileName(input);
         manageSheet(sheet, true);
     }
@@ -78,7 +79,7 @@ public class Starter {
             System.out.println("REMOVE a person");
             System.out.println("SAVE sheet");
             System.out.println("RETURN to main menu");
-            input = scanner.next().toUpperCase();
+            input = scanner.nextLine().toUpperCase();
             switch(input) {
                 case ("VIEW") -> viewSheet(sheet);
                 case ("ADD") -> { addPerson(sheet); changes = true; }
@@ -90,6 +91,8 @@ public class Starter {
     }
 
     private static void viewSheet(RollSheet sheet) {
+        Collections.sort(sheet.getAttendees());
+        Collections.sort(sheet.getAbsentees());
         System.out.println();
         System.out.println("----------Roll Sheet----------");
         System.out.println("---ATTENDEES---");
@@ -100,8 +103,7 @@ public class Starter {
         System.out.println(sheet.raidReady());
         System.out.println(sheet.raidOptimal());
         System.out.println("(Press Enter to continue.)");
-        try { System.in.read(); }
-        catch (IOException e) { System.out.println("Error in pause."); }
+        scanner.nextLine();
     }
 
     private static void addPerson(RollSheet sheet) {
@@ -112,8 +114,7 @@ public class Starter {
             System.out.println();
             System.out.println("---Add Person---");
             System.out.print("Name (Required): ");
-            name = scanner.next();
-            scanner.nextLine();
+            name = scanner.nextLine();
             absent = confirmYes("Absentee? (Y/N): ");
             if(absent) {
                 System.out.print("Reason: ");
@@ -156,7 +157,7 @@ public class Starter {
             System.out.println();
             System.out.println("---Remove Person---");
             System.out.println("Who would you like to remove from the roll sheet?");
-            name = scanner.next();
+            name = scanner.nextLine();
             person = sheet.findPerson(name);
             if(person == null)
                 System.out.println("No person named %s found.".formatted(name));
@@ -169,6 +170,8 @@ public class Starter {
 
     private static void saveSheet(RollSheet sheet) {
         try {
+            Collections.sort(sheet.getAttendees());
+            Collections.sort(sheet.getAbsentees());
             sheet.save();
         } catch (IOException e) {
             System.out.println("Error in file saving.");
@@ -181,8 +184,8 @@ public class Starter {
     }
 
     private static boolean confirmYes(String message) {
-        System.out.println(message);
-        input = scanner.next();
+        System.out.print(message);
+        input = scanner.nextLine();
         return (input.startsWith("Y"));
     }
 }
