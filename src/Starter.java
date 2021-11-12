@@ -3,9 +3,13 @@ import People.Role.DPS;
 import People.Role.Healer;
 import People.Role.Tank;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Starter {
@@ -14,8 +18,17 @@ public class Starter {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        RollSheet sheet;
+        String filename = LocalDateTime.now().format(DateTimeFormatter.ofPattern("M-d-y")) + ".raid";
         System.out.println("Welcome to the Roll Sheet");
-        mainMenu();
+        try {
+            sheet = new RollSheet(filename);
+            if(confirmYes("There is a Roll Sheet already created for today, would you like to load it?"))
+                manageSheet(sheet, false);
+            mainMenu();
+        } catch(FileNotFoundException f) {
+            mainMenu();
+        }
     }
 
     private static void mainMenu() {
@@ -101,8 +114,7 @@ public class Starter {
             System.out.print("Name (Required): ");
             name = scanner.next();
             scanner.nextLine();
-            System.out.print("Absentee? (Y/N): ");
-            absent = scanner.nextLine().startsWith("Y");
+            absent = confirmYes("Absentee? (Y/N): ");
             if(absent) {
                 System.out.print("Reason: ");
                 reason = scanner.nextLine();
@@ -133,9 +145,7 @@ public class Starter {
                 else
                     sheet.addAttendee(person);
             }
-            System.out.print("Add another person? (Y/N): ");
-            input = scanner.next();
-        } while(input.startsWith("Y"));
+        } while(confirmYes("Add another person? (Y/N): "));
     }
 
     private static void removePerson(RollSheet sheet) {
@@ -154,9 +164,7 @@ public class Starter {
                 found = sheet.removeAbsentee(person);
                 if(!found) sheet.removeAttendee(person);
             }
-            System.out.println("Remove another person? (Y/N): ");
-            input = scanner.next();
-        } while(input.startsWith("Y"));
+        } while(confirmYes("Remove another person? (Y/N): "));
     }
 
     private static void saveSheet(RollSheet sheet) {
@@ -168,10 +176,13 @@ public class Starter {
     }
 
     private static void confirmReturn(RollSheet sheet) {
-        String confirm;
-        System.out.println("Would you like to save the sheet before returning?");
-        confirm = scanner.next().toUpperCase();
-        if(confirm.startsWith("Y"))
+        if(confirmYes("Would you like to save the sheet before returning?"))
             saveSheet(sheet);
+    }
+
+    private static boolean confirmYes(String message) {
+        System.out.println(message);
+        input = scanner.next();
+        return (input.startsWith("Y"));
     }
 }
