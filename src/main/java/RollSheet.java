@@ -4,12 +4,10 @@ import People.Role.Healer;
 import People.Role.Tank;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public class RollSheet {
 
